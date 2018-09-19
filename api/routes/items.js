@@ -107,4 +107,11 @@ router.delete('/', (req, res, next) => {
 	});;
 });
 
+router.post('/createitemui', (req, res, next)=> {
+	console.log('item route!');	
+	res.status(200).json({
+		message: 'Item Created Successfully!'
+	});
+});
+
 module.exports = router;

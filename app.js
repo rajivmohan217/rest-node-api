@@ -10,6 +10,8 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
+app.use(express.static('./public'));
+
 app.use('/items', itemRoutes);
 
 app.use((req, res, next) => {

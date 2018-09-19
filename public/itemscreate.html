@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="main.css">
+    <title>Item Create</title>
+</head>
+
+<body>
+    <h1>Create Item</h1>
+    <div class="createitem">
+        <form action="/items/createitemui" method="POST">
+            <p>
+                <label for="">ItemName</label>
+                <input type="text" name="itemname">
+            </p>
+            <p>
+                <label for="">ItemDescription</label>
+                <input type="text" name="description">
+            </p>
+            <p>
+                <label for="">Status</label>
+                <input type="text" name="status">
+            </p>
+
+            <p>
+                <label for="">Price</label>
+                <input type="text" name="price">
+            </p>
+            <button>Submit</button>
+        </form>
+    </div>
+
+</body>
+
+</html>
