@@ -12,17 +12,16 @@ connection.connect((err) => {
 	if (err) {
 		console.log(err);		
 	} else {
-		console.log('Connection Successfull!');
-		
+		console.log('Connection Successfull!');		
 	}
 });
 
 router.get('/',(req, res, next) => {
-	let sql = 'SELECT * FROM products_b' ;
-	connection.query(sql, (err, rows, fields) => {
+	let getALLItems = 'SELECT * FROM products_b' ;
+	connection.query(getALLItems, (err, rows, fields) => {
 		if (err) {
 			res.status(500).json({
-				message : err.sqlMessage
+				Error : err.sqlMessage
 			});				
 		} else {
 			res.status(200);
@@ -31,38 +30,37 @@ router.get('/',(req, res, next) => {
 	});	
 });
 
-
 router.get('/:itemname',(req, res, next) => {
-	let sql = 'SELECT * FROM products_b where itemnumber ?';
-	connection.query(sql, req.param.itemname, (err, rows, fields) => {
+	let singleItemQuery = 'SELECT * FROM PRODUCTS_B WHERE ITEMNUMBER=?';
+	connection.query(singleItemQuery, req.params.itemname, (err, rows, fields) => {
 		if (err) {
 			res.status(500).json({
 				message: err.sqlMessage});			
 		} else {
-			res.status(200).json({
-				message : 'Handling GET Request!',
-				itemname : rows.itemnumber
-			});
+			res.status(200);
+			res.send(rows);
 		}
 	});	
 });
 
 router.post('/',(req, res, next) => {
-	let sql = 'INSERT INTO products_b SET ?';
-	var sqlValues = {
+	let insertItems = 'INSERT INTO products_b SET ?';
+	var insertItemsValues = {
 		"itemnumber" : req.body.itemname,
 		"itemdescription" : req.body.description, 
 		"status" : req.body.status,
 		"price" : req.body.price
 	};
-	connection.query(sql, sqlValues, (err, rows, fields) => {
-		if (err) {
-			console.log(err);
+	connection.query(insertItems, insertItemsValues, (err, rows, fields) => {
+		if (err.code === 'ER_DUP_ENTRY') {			
 			res.status(500).json({
-				message : err.sqlMessage
+				Error : `\'${req.body.itemname}\'  already exists`
 			});			
-		} else {
-			console.log('Record inserted');	
+		} else if(err) {
+			res.status(500).json({
+				Error : err.sqlMessage});
+		}
+		else {			
 			res.status(200).json({
 				message : 'Item is created!!',
 				itemnumber : req.body.itemname,
@@ -70,23 +68,42 @@ router.post('/',(req, res, next) => {
 				status : req.body.status,
 				price : req.body.price		
 			});
-	}
-	
+		}	
 	});
 });
 
 router.patch('/',(req, res, next) => {
-	res.status(200).json({
-		message : 'Handling Patch Request!'
+	let updateQuery  = 'UPDATE PRODUCTS_B SET itemdescription =?, price= ?, status= ? WHERE itemnumber = ? ';	
+	connection.query(updateQuery,[req.body.description, req.body.price, req.body.status, req.body.itemname],(err, results, fileds) => {
+		if (err) {
+			res.status(500).json({
+				Error : err.sqlMessage
+			});
+		} else{
+			res.status(200).json({
+				message : 'Item is updated!!',
+				itemnumber : req.body.itemname,
+				itemdescription : req.body.description, 
+				status : req.body.status,
+				price : req.body.price		
+			});
+		}
 	});
 });
 
 router.delete('/',(req, res, next) => {
-	res.status(200).json({
-		message : 'Handling delete Request!'
-	});
+	let deleteQuery  = 'DELETE FROM PRODUCTS_B WHERE itemnumber = ? ';	
+	connection.query(deleteQuery,req.body.itemname,(err, results, fileds) => {
+		if (err) {
+			res.status(500).json({
+				Error : err.sqlMessage
+			});
+		} else{
+			res.status(200).json({
+				message : `\'${req.body.itemname}\' is deleted!!`				
+			});
+		}
+	});;
 });
-
-
 
 module.exports = router;
