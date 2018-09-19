@@ -10,10 +10,11 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
+//Routes
 app.use(express.static('./public'));
-
 app.use('/items', itemRoutes);
 
+//Error Handling
 app.use((req, res, next) => {
 	const error = new Error('Not Found');
 	error.status = 404;
