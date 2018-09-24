@@ -15,16 +15,21 @@ label {
     display: inline-block;
 }
 
-input[type=submit] {
-    background-color: #4CAF50;
-    color: white;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    float: right;
+
+p input {
+    margin-left: 15em;
+  }
+
+p label{
+    position: absolute;
+    font-size: x-large;
+    color: rgb(182, 13, 27);
 }
 
-input[type=submit]:hover {
-    background-color: #45a049;
+button {
+    padding: 10px;
+    background-color: azure;    
 }
+
+h1{
+    color: rgb(red, green, blue);

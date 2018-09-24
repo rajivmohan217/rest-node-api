@@ -3,9 +3,9 @@ const router = express.Router();
 const mysql = require('mysql');
 
 const connection = mysql.createConnection({
-	host: process.env.DB_HOST,
-	user: process.env.DB_USER,
-	database: process.env.DB_NAME
+	host: process.env.DB_HOST || 'localhost',
+	user: process.env.DB_USER || 'root',
+	database: process.env.DB_NAME || 'productdb'
 });
 
 connection.connect((err) => {
@@ -36,6 +36,10 @@ router.get('/:itemname', (req, res, next) => {
 		if (err) {
 			res.status(500).json({
 				message: err.sqlMessage
+			});
+		} else if (results.length < 1) {
+			res.status(200).json({
+				message: "No Item Found!"
 			});
 		} else {
 			res.status(200);
@@ -80,9 +84,13 @@ router.patch('/', (req, res, next) => {
 			res.status(500).json({
 				Error: err.sqlMessage
 			});
+		} else if (results.affectedRows < 1) {
+			res.status(200).json({
+				message: 'No item Found'
+			});
 		} else {
 			res.status(200).json({
-				message: 'Item is updated!!',
+				message: 'Item Updated Successfully!',
 				itemnumber: req.body.itemname,
 				itemdescription: req.body.description,
 				status: req.body.status,
@@ -107,11 +115,25 @@ router.delete('/', (req, res, next) => {
 	});;
 });
 
-router.post('/createitemui', (req, res, next)=> {
-	console.log('item route!');	
-	res.status(200).json({
-		message: 'Item Created Successfully!'
-	});
+router.post('/createitemui', (req, res, next) => {
+	// console.log('item route!');	
+	if (err.code === 'ER_DUP_ENTRY') {
+		res.status(500).json({
+			Error: `\'${req.body.itemname}\'  already exists`
+		});
+	} else if (err) {
+		res.status(500).json({
+			Error: err.sqlMessage
+		});
+	} else {
+		res.status(200).json({
+			message: 'Item is created!!',
+			itemnumber: req.body.itemname,
+			itemdescription: req.body.description,
+			status: req.body.status,
+			price: req.body.price
+		});
+	}
 });
 
 module.exports = router;
